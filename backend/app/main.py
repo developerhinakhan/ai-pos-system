@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from app.core.config import settings
+from app.modules.auth.router import router as auth_router
 
 # Create FastAPI app
 app = FastAPI(
@@ -8,6 +9,9 @@ app = FastAPI(
     version="1.0.0",
     description="AI Powered POS System"
 )
+
+# Register routers
+app.include_router(auth_router)
 
 
 # Health check endpoint
