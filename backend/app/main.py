@@ -1,6 +1,13 @@
 from fastapi import FastAPI
 from app.core.config import settings
 from app.modules.auth.router import router as auth_router
+from app.modules.products.router import router as product_router
+from app.modules.users.model import User
+from app.modules.categories.model import Category
+from app.modules.products.model import Product
+from app.modules.customers.model import Customer
+from app.modules.sales.model import Sale
+from app.modules.sales.sale_item_model import SaleItem
 
 # Create FastAPI app
 app = FastAPI(
@@ -12,6 +19,7 @@ app = FastAPI(
 
 # Register routers
 app.include_router(auth_router)
+app.include_router(product_router)
 
 
 # Health check endpoint
