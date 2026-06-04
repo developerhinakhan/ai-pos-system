@@ -23,6 +23,6 @@ def create_category(data:CategoryCreate,db:Session=Depends(get_db), current_user
 def update_category(id:int,data:CategoryUpdate,db:Session=Depends(get_db), current_user = Depends(get_current_user)):
     return category_service.update_category(db,id,data)
 
-@router.delete("/{id}",response_model= CategoryResponse)
+@router.delete("/{id}")
 def delete_category(id:int,db:Session=Depends(get_db), current_user = Depends(get_current_user)):
     return category_service.delete_category(db,id)

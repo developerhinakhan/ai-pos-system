@@ -27,6 +27,6 @@ def create_product(data:ProductCreate,db:Session=Depends(get_db), current_user =
 def update_product(id:int,data:ProductUpdate,db:Session=Depends(get_db), current_user = Depends(get_current_user)):
     return product_service.update_product(db,id,data)
 
-@router.delete("/{id}",response_model=ProductResponse)
-def delete_product(id:int,db:Session=Depends(get_db), current_user = Depends(get_current_user)):
-    return product_service.delete_product(db,id)
+@router.delete("/{id}")
+def delete_product(id:int, db:Session=Depends(get_db), current_user=Depends(get_current_user)):
+    return product_service.delete_product(db, id)

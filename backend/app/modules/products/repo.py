@@ -18,7 +18,7 @@ class ProductRepo:
         db.refresh(product)
         return product
     
-    def get_product_by_sku(self, db: Session, sku: str):
+    def get_product_by_sku(self, db: Session, sku: str): 
         return db.query(Product).filter(Product.sku == sku).first()
 
     def update_product(self, db: Session, product, update_data: dict):
@@ -33,4 +33,4 @@ class ProductRepo:
         db.commit()
         return "Product Deleted Succesfully✅"
     
-product_repo= ProductRepo
+product_repo= ProductRepo()

@@ -4,6 +4,8 @@ from app.core.config import settings
 from app.modules.auth.router import router as auth_router
 from app.modules.products.router import router as product_router
 from app.modules.categories.router import router as category_router
+from app.modules.customers.router import router as customer_router
+
 
 
 # Import all models to register them with SQLAlchemy
@@ -29,7 +31,7 @@ app = FastAPI(
 app.include_router(auth_router)
 app.include_router(product_router)
 app.include_router(category_router)
-
+app.include_router(customer_router)
 
 # Health check endpoint
 @app.get("/")
