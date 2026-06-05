@@ -22,4 +22,4 @@ class Sale(Base):
 
     customer = relationship("Customer", back_populates="sales")
     user = relationship("User", back_populates="sales")
-    items = relationship("SaleItem", back_populates="sale")
+    items = relationship("SaleItem", back_populates="sale", cascade="all, delete-orphan")
