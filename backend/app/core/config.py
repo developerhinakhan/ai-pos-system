@@ -16,6 +16,9 @@ class Settings(BaseSettings):
 
     # Redis
     REDIS_URL: str = "redis://localhost:6379"
+    
+    # AI
+    GROQ_API_KEY: str  
 
     class Config:
         env_file = ".env"

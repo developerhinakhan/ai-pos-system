@@ -6,6 +6,8 @@ from app.modules.products.router import router as product_router
 from app.modules.categories.router import router as category_router
 from app.modules.customers.router import router as customer_router
 from app.modules.sales.router import router as sale_router
+from app.modules.ai.router import router as ai_router
+
 
 
 
@@ -35,6 +37,7 @@ app.include_router(product_router)
 app.include_router(category_router)
 app.include_router(customer_router)
 app.include_router(sale_router)
+app.include_router(ai_router)
 
 # Health check endpoint
 @app.get("/")
