@@ -237,5 +237,3 @@ __pycache__/
 htmlcov/
 .coverage
 
-# Alembic
-alembic/versions/*.py
