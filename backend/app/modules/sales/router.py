@@ -15,7 +15,7 @@ def get_all_sales(db: Session = Depends(get_db),current_user = Depends(get_curre
 def get_sale_by_id(id:int, db: Session = Depends(get_db),current_user = Depends(get_current_user)):
     return sale_service.get_sale_by_id(db, id)
 
-@router.post("/")
+@router.post("/", response_model=SaleResponse)
 def create_sale(data: SaleCreate,db: Session = Depends(get_db),current_user = Depends(get_current_user)):
     return sale_service.create_sale(db, data, current_user.id)
 
