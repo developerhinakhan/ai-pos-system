@@ -50,3 +50,12 @@ def root():
         "status": "running",
         "version": "1.0.0"
     }
+    
+# Debug endpoint
+@app.get("/debug")
+def debug():
+    import os
+    db_url = os.environ.get("DATABASE_URL", "NOT FOUND")
+    return {
+        "db_starts_with": db_url[:50] if db_url else "empty"
+    }
