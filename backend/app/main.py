@@ -20,7 +20,7 @@ from app.modules.products.model import Product
 from app.modules.customers.model import Customer
 from app.modules.sales.model import Sale
 from app.modules.sales.sale_item_model import SaleItem
-
+from app.database import Base, engine
 
 # Create FastAPI app
 app = FastAPI(
@@ -30,6 +30,9 @@ app = FastAPI(
     description="AI Powered POS System"
 )
 
+@app.on_event("startup")
+async def startup():
+    Base.metadata.create_all(bind=engine)
 
 # Register routers
 app.include_router(auth_router)
