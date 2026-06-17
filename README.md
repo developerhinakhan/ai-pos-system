@@ -1,6 +1,6 @@
 # 🤖 AI-Powered POS System
 
-> A production-grade Point of Sale system built with FastAPI, PostgreSQL, Redis, and Groq AI — deployed on Railway with full Docker support and 28 automated tests.
+> A production grade Point of Sale system built with FastAPI, PostgreSQL, Redis, and Groq AI deployed on Railway with full Docker support and 28 automated tests.
 
 **Live Demo:** [ai-pos-system-production.up.railway.app](https://ai-pos-system-production.up.railway.app/docs)  
 **Portfolio:** [developerhinakhan.github.io](https://developerhinakhan.github.io)  
@@ -26,16 +26,16 @@
 
 ## 🎯 Overview
 
-An AI-powered Point of Sale (POS) system designed for small to medium businesses. Built with a layered architecture pattern following production-grade standards. The system includes intelligent inventory analysis, sales insights, and business recommendations powered by Groq AI (LLaMA 3.3 70B).
+An AI-powered Point of Sale (POS) system designed for small to medium businesses. Built with a layered architecture pattern following production grade standards. The system includes intelligent inventory analysis, sales insights, and business recommendations powered by Groq AI (LLaMA 3.3 70B).
 
-This project was built from scratch to demonstrate real-world backend development skills including:
+This project was built from scratch to demonstrate real world backend development skills including:
 - RESTful API design with FastAPI
 - Relational database management with PostgreSQL
 - Caching layer with Redis
 - AI integration with Groq API
 - Containerization with Docker
 - Cloud deployment on Railway
-- Test-driven development with pytest
+- Test driven development with pytest
 
 ---
 
@@ -70,17 +70,17 @@ This project was built from scratch to demonstrate real-world backend developmen
 - **Redis Caching** — Cached responses for products and categories (300s TTL)
 
 ### AI Features (Powered by Groq LLaMA 3.3 70B)
-- **Low Stock Analysis** — AI-powered inventory alerts and recommendations
+- **Low Stock Analysis** — AI powered inventory alerts and recommendations
 - **Sales Insights** — Intelligent analysis of sales patterns and trends
 - **Business Recommendations** — Strategic business advice based on data
 
 ### Technical Features
 - Layered architecture (Router → Service → Repository → Database)
-- Docker containerization with multi-service setup
+- Docker containerization with multi service setup
 - 28 automated pytest tests across all modules
 - Alembic database migrations
 - Professional Git branching workflow
-- Environment-based configuration with Pydantic Settings
+- Environment based configuration with Pydantic Settings
 
 ---
 
@@ -341,13 +341,9 @@ This application is deployed on **Railway** with:
 
 ## 👩‍💻 Developer
 
-**Hina Khan** — Python Backend Developer  
-📍 Okara, Pakistan  
-🌐 [Portfolio](https://developerhinakhan.github.io)  
-💼 [GitHub](https://github.com/developerhinakhan)  
+**Hina Khan** 
+Python Backend Developer  
+Okara, Pakistan  
+[Portfolio](https://developerhinakhan.github.io)  
+[GitHub](https://github.com/developerhinakhan)  
 
----
-
-## 📄 License
-
-This project is open source and available under the [MIT License](LICENSE).
