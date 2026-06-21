@@ -7,7 +7,7 @@ from app.modules.categories.router import router as category_router
 from app.modules.customers.router import router as customer_router
 from app.modules.sales.router import router as sale_router
 from app.modules.ai.router import router as ai_router
-
+from fastapi.responses import RedirectResponse
 
 
 
@@ -43,13 +43,18 @@ app.include_router(sale_router)
 app.include_router(ai_router)
 
 # Health check endpoint
-@app.get("/")
-def root():
+@app.get("/health", include_in_schema=False)
+def health_check():
     return {
         "app": settings.APP_NAME,
         "status": "running",
         "version": "1.0.0"
     }
+
+# Root redirects to docs
+@app.get("/", include_in_schema=False)
+def root():
+    return RedirectResponse(url="/docs")
     
 # Debug endpoint
 @app.get("/debug")
