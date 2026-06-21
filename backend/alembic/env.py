@@ -6,6 +6,8 @@ from sqlalchemy import pool
 from alembic import context
 import sys
 import os
+from dotenv import load_dotenv
+load_dotenv()
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 # this is the Alembic Config object, which provides
