@@ -134,7 +134,9 @@ class AIService:
 
         return {
             "total_products": len(products),
-            "ai_recommendations": response.choices[0].message.content
+            "ai_recommendations": response.choices[0].message.content,
+            "debug_finish_reason": response.choices[0].finish_reason,
+            "debug_full_message": str(response.choices[0].message)
         }
 
 
