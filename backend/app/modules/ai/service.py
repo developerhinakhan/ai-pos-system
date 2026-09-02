@@ -45,7 +45,8 @@ class AIService:
         response = client.chat.completions.create(
             model="openai/gpt-oss-120b",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=500
+            max_tokens=500,
+            reasoning_effort="low"
         )
 
         return {
@@ -85,7 +86,8 @@ class AIService:
         response = client.chat.completions.create(
             model="openai/gpt-oss-120b",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=500
+            max_tokens=500,
+            reasoning_effort="low"
         )
 
         return {
@@ -129,7 +131,8 @@ class AIService:
         response = client.chat.completions.create(
             model="openai/gpt-oss-120b",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=500
+            max_tokens=500,
+            reasoning_effort="low"
         )
 
         return {
