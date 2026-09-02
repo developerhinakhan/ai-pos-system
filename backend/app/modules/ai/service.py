@@ -39,12 +39,13 @@ class AIService:
         2. Priority order for restocking
         3. Simple recommendations
         
-        Keep response short and practical.
+        Respond in under 100 words using short bullet points only. No headers, no tables, no markdown formatting.
         """
 
         response = client.chat.completions.create(
             model="openai/gpt-oss-120b",
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=200
         )
 
         return {
@@ -77,12 +78,14 @@ class AIService:
         2. Key insights
         3. Simple recommendations to improve revenue
         
-        Keep response short and practical.
+        Respond in under 100 words using short bullet points only. No headers, no tables, no markdown formatting.
+
         """
 
         response = client.chat.completions.create(
             model="openai/gpt-oss-120b",
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=200
         )
 
         return {
@@ -120,12 +123,13 @@ class AIService:
         2. Pricing strategy
         3. Stock optimization
         
-        Keep it practical and actionable.
+        Respond in under 100 words using short bullet points only. No headers, no tables, no markdown formatting.
         """
 
         response = client.chat.completions.create(
             model="openai/gpt-oss-120b",
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=200
         )
 
         return {
