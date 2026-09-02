@@ -43,9 +43,10 @@ class AIService:
         """
 
         response = client.chat.completions.create(
-            model="meta-llama/llama-4-scout-17b-16e-instruct",
+            model="openai/gpt-oss-120b",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=500,
+            max_tokens=800,
+            reasoning_effort="low"
         )
 
         return {
@@ -83,9 +84,10 @@ class AIService:
         """
 
         response = client.chat.completions.create(
-            model="meta-llama/llama-4-scout-17b-16e-instruct",
+            model="openai/gpt-oss-120b",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=500,
+            max_tokens=800,
+            reasoning_effort="low"
         )
 
         return {
@@ -127,16 +129,15 @@ class AIService:
         """
 
         response = client.chat.completions.create(
-            model="meta-llama/llama-4-scout-17b-16e-instruct",
+            model="openai/gpt-oss-120b",
             messages=[{"role": "user", "content": prompt}],
-            max_tokens=500,
+            max_tokens=800,
+            reasoning_effort="low"
         )
 
         return {
             "total_products": len(products),
-            "ai_recommendations": response.choices[0].message.content,
-            "debug_finish_reason": response.choices[0].finish_reason,
-            "debug_full_message": str(response.choices[0].message)
+            "ai_recommendations": response.choices[0].message.content
         }
 
 
