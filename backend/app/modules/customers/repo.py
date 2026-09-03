@@ -3,7 +3,7 @@ from app.modules.customers.model import Customer
 
 class CustomerRepo:
     def get_all_customers(self, db: Session):
-        return db.query(Customer).all()
+        return db.query(Customer).filter(Customer.is_active == True).all()
     
     def get_customer_by_id(self, db: Session,id:int):
         return db.query(Customer).filter(Customer.id==id).first()
@@ -26,9 +26,10 @@ class CustomerRepo:
         return customer
         
     def delete_customer(self, db: Session, customer):
-        db.delete(customer)
+        customer.is_active = False
         db.commit()
-        return "Customer deleted successfully"
+        db.refresh(customer)
+        return "Customer deactivated successfully"
     
 
 customer_repo= CustomerRepo() 
