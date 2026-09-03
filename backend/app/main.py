@@ -1,6 +1,7 @@
 # Import routers for all modules
 from fastapi import FastAPI
 from app.core.config import settings
+from fastapi.middleware.cors import CORSMiddleware
 from app.modules.auth.router import router as auth_router
 from app.modules.products.router import router as product_router
 from app.modules.categories.router import router as category_router
@@ -8,6 +9,7 @@ from app.modules.customers.router import router as customer_router
 from app.modules.sales.router import router as sale_router
 from app.modules.ai.router import router as ai_router
 from fastapi.responses import RedirectResponse
+
 
 
 
@@ -28,6 +30,14 @@ app = FastAPI(
     debug=settings.DEBUG,
     version="1.0.0",
     description="AI Powered POS System"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.on_event("startup")
