@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS System — Dashboard</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0A0F1E;
+      color: #E8EDF5;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+    .container { max-width: 1000px; margin: 0 auto; }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    nav a {
+      color: #93A0B3;
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 0.5rem 0.9rem;
+      border: 1px solid #1E2A3A;
+      border-radius: 8px;
+    }
+    nav a:hover { color: #00D4FF; border-color: #00D4FF; }
+    nav a.active { color: #00D4FF; border-color: #00D4FF; background: #00D4FF11; }
+
+    h1 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .stat-card {
+      background: #111827;
+      border: 1px solid #1E2A3A;
+      border-radius: 14px;
+      padding: 1.25rem;
+    }
+    .stat-label {
+      color: #93A0B3;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .card {
+      background: #111827;
+      border: 1px solid #1E2A3A;
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .card h2 {
+      font-size: 1.05rem;
+      margin-bottom: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .badge {
+      font-size: 0.65rem;
+      background: #00D4FF22;
+      color: #00D4FF;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .ai-text {
+      color: #C3CBDA;
+      font-size: 0.92rem;
+      line-height: 1.7;
+      white-space: pre-line;
+    }
+
+    .muted { color: #93A0B3; font-size: 0.85rem; }
+    .error { color: #FF6B6B; font-size: 0.85rem; }
+
+    .refresh-btn {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.78rem;
+      border-radius: 6px;
+      border: 1px solid #1E2A3A;
+      background: transparent;
+      color: #93A0B3;
+      cursor: pointer;
+      margin-left: auto;
+    }
+    .refresh-btn:hover { color: #00D4FF; border-color: #00D4FF; }
+
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #1E2A3A;
+      border-top-color: #00D4FF;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <div style="font-weight:700;">POS System</div>
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <a href="products.html">Products</a>
+        <a href="sale.html">Make Sale</a>
+        <a href="dashboard.html" class="active">Dashboard</a>
+        <a href="#" id="logoutLink">Logout</a>
+      </div>
+    </nav>
+
+    <h1>Dashboard</h1>
+
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-label">Total Sales</div>
+        <div class="stat-value" id="statSales"><span class="spinner"></span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Revenue</div>
+        <div class="stat-value" id="statRevenue"><span class="spinner"></span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Average Sale</div>
+        <div class="stat-value" id="statAverage"><span class="spinner"></span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>⚠️ Low Stock Analysis <span class="badge">AI</span> <button class="refresh-btn" onclick="loadLowStock()">Refresh</button></h2>
+      <div id="lowStockContent" class="muted"><span class="spinner"></span> Loading...</div>
+    </div>
+
+    <div class="card">
+      <h2>📈 Sales Insights <span class="badge">AI</span> <button class="refresh-btn" onclick="loadSalesInsights()">Refresh</button></h2>
+      <div id="salesInsightsContent" class="muted"><span class="spinner"></span> Loading...</div>
+    </div>
+
+    <div class="card">
+      <h2>💡 Business Recommendations <span class="badge">AI</span> <button class="refresh-btn" onclick="loadRecommendations()">Refresh</button></h2>
+      <div id="recommendationsContent" class="muted"><span class="spinner"></span> Loading...</div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "https://ai-pos-system-production-8ee2.up.railway.app";
+    const token = localStorage.getItem("pos_token");
+
+    if (!token) {
+      window.location.href = "login.html";
+    }
+
+    const authHeaders = {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    };
+
+    document.getElementById("logoutLink").addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("pos_token");
+      window.location.href = "login.html";
+    });
+
+    async function loadStats() {
+      try {
+        const res = await fetch(`${API_BASE}/sales/`, { headers: authHeaders });
+        if (!res.ok) throw new Error();
+        const sales = await res.json();
+
+        const totalSales = sales.length;
+        const totalRevenue = sales.reduce((sum, s) => sum + s.final_amount, 0);
+        const avg = totalSales > 0 ? totalRevenue / totalSales : 0;
+
+        document.getElementById("statSales").textContent = totalSales;
+        document.getElementById("statRevenue").textContent = `$${totalRevenue.toFixed(2)}`;
+        document.getElementById("statAverage").textContent = `$${avg.toFixed(2)}`;
+      } catch (err) {
+        document.getElementById("statSales").textContent = "—";
+        document.getElementById("statRevenue").textContent = "—";
+        document.getElementById("statAverage").textContent = "—";
+      }
+    }
+
+    async function loadLowStock() {
+      const el = document.getElementById("lowStockContent");
+      el.innerHTML = `<span class="spinner"></span> Analyzing...`;
+      try {
+        const res = await fetch(`${API_BASE}/ai/low-stock`, { headers: authHeaders });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to load");
+
+        if (data.message) {
+          el.innerHTML = `<p class="muted">${data.message}</p>`;
+          return;
+        }
+
+        el.innerHTML = `<div class="ai-text">${data.ai_analysis}</div>`;
+      } catch (err) {
+        el.innerHTML = `<p class="error">Could not load: ${err.message}</p>`;
+      }
+    }
+
+    async function loadSalesInsights() {
+      const el = document.getElementById("salesInsightsContent");
+      el.innerHTML = `<span class="spinner"></span> Analyzing...`;
+      try {
+        const res = await fetch(`${API_BASE}/ai/sales-insights`, { headers: authHeaders });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to load");
+
+        if (data.message) {
+          el.innerHTML = `<p class="muted">${data.message}</p>`;
+          return;
+        }
+
+        el.innerHTML = `<div class="ai-text">${data.ai_insights}</div>`;
+      } catch (err) {
+        el.innerHTML = `<p class="error">Could not load: ${err.message}</p>`;
+      }
+    }
+
+    async function loadRecommendations() {
+      const el = document.getElementById("recommendationsContent");
+      el.innerHTML = `<span class="spinner"></span> Analyzing...`;
+      try {
+        const res = await fetch(`${API_BASE}/ai/recommendations`, { headers: authHeaders });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to load");
+
+        if (data.message) {
+          el.innerHTML = `<p class="muted">${data.message}</p>`;
+          return;
+        }
+
+        el.innerHTML = `<div class="ai-text">${data.ai_recommendations}</div>`;
+      } catch (err) {
+        el.innerHTML = `<p class="error">Could not load: ${err.message}</p>`;
+      }
+    }
+
+    loadStats();
+    loadLowStock();
+    loadSalesInsights();
+    loadRecommendations();
+  </script>
+</body>
+</html>

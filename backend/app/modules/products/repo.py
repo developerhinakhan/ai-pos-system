@@ -3,7 +3,7 @@ from app.modules.products.model import Product
 
 class ProductRepo:
     def get_all_products(self,db: Session):
-        return  db.query(Product).all()
+        return  db.query(Product).filter(Product.is_active == True).all()
         
     def get_product_by_id(self, db: Session, id: int):  
         return db.query(Product).filter(Product.id==id).first()
@@ -29,8 +29,9 @@ class ProductRepo:
         return product
         
     def delete_product(self, db: Session, product):
-        db.delete(product)
+        product.is_active = False
         db.commit()
-        return "Product Deleted Succesfully✅"
+        db.refresh(product)
+        return "Product Deactivated Succesfully✅"
     
 product_repo= ProductRepo()

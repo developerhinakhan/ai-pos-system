@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POS System — Make a Sale</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0A0F1E;
+      color: #E8EDF5;
+      min-height: 100vh;
+      padding: 1.5rem;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+    nav a {
+      color: #93A0B3;
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 0.5rem 0.9rem;
+      border: 1px solid #1E2A3A;
+      border-radius: 8px;
+    }
+    nav a:hover { color: #00D4FF; border-color: #00D4FF; }
+    nav a.active { color: #00D4FF; border-color: #00D4FF; background: #00D4FF11; }
+
+    h1 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+
+    .card {
+      background: #111827;
+      border: 1px solid #1E2A3A;
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .card h2 { font-size: 1.1rem; margin-bottom: 1rem; }
+
+    .add-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      margin-bottom: 0.5rem;
+    }
+    .add-row > div { flex: 1; min-width: 140px; }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      color: #93A0B3;
+      margin-bottom: 0.35rem;
+    }
+    input, select {
+      width: 100%;
+      padding: 0.65rem;
+      border-radius: 8px;
+      border: 1px solid #1E2A3A;
+      background: #0A0F1E;
+      color: #E8EDF5;
+      font-size: 0.9rem;
+    }
+    input:focus, select:focus { outline: none; border-color: #00D4FF; }
+
+    button {
+      padding: 0.7rem 1.4rem;
+      border-radius: 8px;
+      border: none;
+      background: #00D4FF;
+      color: #0A0F1E;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    button:hover { opacity: 0.9; }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    button.secondary {
+      background: transparent;
+      border: 1px solid #1E2A3A;
+      color: #E8EDF5;
+    }
+    button.danger {
+      background: transparent;
+      border: 1px solid #FF6B6B;
+      color: #FF6B6B;
+      padding: 0.4rem 0.7rem;
+      font-size: 0.8rem;
+    }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td {
+      text-align: left;
+      padding: 0.7rem 0.5rem;
+      border-bottom: 1px solid #1E2A3A;
+      font-size: 0.88rem;
+    }
+    th { color: #93A0B3; font-weight: 500; font-size: 0.78rem; text-transform: uppercase; }
+
+    .totals-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.4rem 0;
+      font-size: 0.9rem;
+      color: #93A0B3;
+    }
+    .totals-row.final {
+      color: #E8EDF5;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border-top: 1px solid #1E2A3A;
+      margin-top: 0.5rem;
+      padding-top: 0.75rem;
+    }
+
+    #message { margin-top: 1rem; font-size: 0.85rem; }
+    .error { color: #FF6B6B; }
+    .success { color: #00FF88; }
+    .muted { color: #93A0B3; font-size: 0.85rem; padding: 1rem 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <div style="font-weight:700;">POS System</div>
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <a href="products.html">Products</a>
+        <a href="sale.html" class="active">Make Sale</a>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="#" id="logoutLink">Logout</a>
+      </div>
+    </nav>
+
+    <h1>Make a Sale</h1>
+
+    <div class="card">
+      <h2>Add Item</h2>
+      <div class="add-row">
+        <div>
+          <label>Product</label>
+          <select id="productSelect">
+            <option value="">Loading...</option>
+          </select>
+        </div>
+        <div style="max-width:100px;">
+          <label>Quantity</label>
+          <input type="number" id="quantity" min="1" value="1" />
+        </div>
+        <button type="button" id="addItemBtn">Add to Cart</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Cart</h2>
+      <div id="cartWrap">
+        <p class="muted">Cart is empty. Add a product above.</p>
+      </div>
+
+      <div class="add-row" style="margin-top:1.25rem;">
+        <div>
+          <label>Discount ($)</label>
+          <input type="number" step="0.01" id="discount" value="0" />
+        </div>
+        <div>
+          <label>Tax ($)</label>
+          <input type="number" step="0.01" id="tax" value="0" />
+        </div>
+        <div>
+          <label>Payment Method</label>
+          <select id="paymentMethod">
+            <option value="cash">Cash</option>
+            <option value="card">Card</option>
+            <option value="mobile">Mobile Payment</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="totalsWrap" style="margin-top:1rem;"></div>
+
+      <button id="checkoutBtn" style="margin-top:1rem;" disabled>Complete Sale</button>
+      <div id="message"></div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = "https://ai-pos-system-production-8ee2.up.railway.app";
+    const token = localStorage.getItem("pos_token");
+
+    if (!token) {
+      window.location.href = "login.html";
+    }
+
+    const authHeaders = {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    };
+
+    document.getElementById("logoutLink").addEventListener("click", (e) => {
+      e.preventDefault();
+      localStorage.removeItem("pos_token");
+      window.location.href = "login.html";
+    });
+
+    let products = [];
+    let cart = []; // { product_id, name, unit_price, quantity }
+
+    async function loadProducts() {
+      const select = document.getElementById("productSelect");
+      try {
+        const res = await fetch(`${API_BASE}/products/`, { headers: authHeaders });
+        if (!res.ok) throw new Error("Failed to load products");
+        products = await res.json();
+
+        if (products.length === 0) {
+          select.innerHTML = `<option value="">No products yet — add some first</option>`;
+          return;
+        }
+
+        select.innerHTML = `<option value="">Select a product</option>` +
+          products.map(p => `<option value="${p.id}">${p.name} — $${p.price.toFixed(2)} (${p.stock_quantity} in stock)</option>`).join("");
+      } catch (err) {
+        select.innerHTML = `<option value="">Error loading products</option>`;
+      }
+    }
+
+    function renderCart() {
+      const wrap = document.getElementById("cartWrap");
+      const checkoutBtn = document.getElementById("checkoutBtn");
+
+      if (cart.length === 0) {
+        wrap.innerHTML = `<p class="muted">Cart is empty. Add a product above.</p>`;
+        checkoutBtn.disabled = true;
+        renderTotals();
+        return;
+      }
+
+      const rows = cart.map((item, idx) => `
+        <tr>
+          <td>${item.name}</td>
+          <td>${item.quantity}</td>
+          <td>$${item.unit_price.toFixed(2)}</td>
+          <td>$${(item.unit_price * item.quantity).toFixed(2)}</td>
+          <td><button class="danger" onclick="removeFromCart(${idx})">Remove</button></td>
+        </tr>
+      `).join("");
+
+      wrap.innerHTML = `
+        <table>
+          <thead>
+            <tr><th>Product</th><th>Qty</th><th>Price</th><th>Subtotal</th><th></th></tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+      checkoutBtn.disabled = false;
+      renderTotals();
+    }
+
+    function renderTotals() {
+      const totalsWrap = document.getElementById("totalsWrap");
+      const subtotal = cart.reduce((sum, item) => sum + item.unit_price * item.quantity, 0);
+      const discount = parseFloat(document.getElementById("discount").value) || 0;
+      const tax = parseFloat(document.getElementById("tax").value) || 0;
+      const final = subtotal - discount + tax;
+
+      totalsWrap.innerHTML = `
+        <div class="totals-row"><span>Subtotal</span><span>$${subtotal.toFixed(2)}</span></div>
+        <div class="totals-row"><span>Discount</span><span>-$${discount.toFixed(2)}</span></div>
+        <div class="totals-row"><span>Tax</span><span>+$${tax.toFixed(2)}</span></div>
+        <div class="totals-row final"><span>Total</span><span>$${final.toFixed(2)}</span></div>
+      `;
+    }
+
+    window.removeFromCart = function(idx) {
+      cart.splice(idx, 1);
+      renderCart();
+    };
+
+    document.getElementById("addItemBtn").addEventListener("click", () => {
+      const productId = parseInt(document.getElementById("productSelect").value);
+      const quantity = parseInt(document.getElementById("quantity").value);
+
+      if (!productId || !quantity || quantity < 1) return;
+
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+
+      const existing = cart.find(item => item.product_id === productId);
+      if (existing) {
+        existing.quantity += quantity;
+      } else {
+        cart.push({
+          product_id: productId,
+          name: product.name,
+          unit_price: product.price,
+          quantity: quantity
+        });
+      }
+
+      renderCart();
+    });
+
+    document.getElementById("discount").addEventListener("input", renderTotals);
+    document.getElementById("tax").addEventListener("input", renderTotals);
+
+    document.getElementById("checkoutBtn").addEventListener("click", async () => {
+      const btn = document.getElementById("checkoutBtn");
+      const messageEl = document.getElementById("message");
+
+      const payload = {
+        discount: parseFloat(document.getElementById("discount").value) || 0,
+        tax: parseFloat(document.getElementById("tax").value) || 0,
+        payment_method: document.getElementById("paymentMethod").value,
+        items: cart.map(item => ({
+          product_id: item.product_id,
+          quantity: item.quantity,
+          unit_price: item.unit_price
+        }))
+      };
+
+      btn.disabled = true;
+      btn.textContent = "Processing...";
+      messageEl.textContent = "";
+      messageEl.className = "";
+
+      try {
+        const res = await fetch(`${API_BASE}/sales/`, {
+          method: "POST",
+          headers: authHeaders,
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.detail || "Failed to complete sale");
+        }
+
+        messageEl.textContent = `Sale completed! Total: $${data.final_amount.toFixed(2)}`;
+        messageEl.className = "success";
+
+        cart = [];
+        document.getElementById("discount").value = 0;
+        document.getElementById("tax").value = 0;
+        renderCart();
+        loadProducts(); // refresh stock quantities
+
+      } catch (err) {
+        messageEl.textContent = err.message;
+        messageEl.className = "error";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Complete Sale";
+      }
+    });
+
+    loadProducts();
+    renderCart();
+  </script>
+</body>
+</html>
