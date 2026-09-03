@@ -3,7 +3,7 @@ from app.modules.categories.model import Category
 
 class CategoryRepo:
     def get_all_categories(self, db: Session):
-        return db.query(Category).all()
+        return db.query(Category).filter(Category.is_active == True).all()
 
     def get_category_by_id(self, db: Session, id: int):
         return db.query(Category).filter(Category.id==id).first()
@@ -26,8 +26,9 @@ class CategoryRepo:
         return category
     
     def delete_category(self,db: Session, category):
-        db.delete(category)
+        category.is_active = False
         db.commit()
-        return "Category Deleted Succesfully"
+        db.refresh(category)
+        return "Category deactivated successfully"
 
 category_repo = CategoryRepo()
