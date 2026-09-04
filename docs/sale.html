@@ -126,6 +126,18 @@
     .error { color: #FF6B6B; }
     .success { color: #00FF88; }
     .muted { color: #93A0B3; font-size: 0.85rem; padding: 1rem 0; }
+
+    .refresh-btn {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.75rem;
+      border-radius: 6px;
+      border: 1px solid #1E2A3A;
+      background: transparent;
+      color: #93A0B3;
+      cursor: pointer;
+      margin-left: 0.75rem;
+    }
+    .refresh-btn:hover { color: #00D4FF; border-color: #00D4FF; }
   </style>
 </head>
 <body>
@@ -143,6 +155,13 @@
     </nav>
 
     <h1>Make a Sale</h1>
+
+    <div class="card">
+      <h2>Customer (optional)</h2>
+      <select id="customerSelect">
+        <option value="">Walk-in customer</option>
+      </select>
+    </div>
 
     <div class="card">
       <h2>Add Item</h2>
@@ -191,6 +210,13 @@
       <button id="checkoutBtn" style="margin-top:1rem;" disabled>Complete Sale</button>
       <div id="message"></div>
     </div>
+
+    <div class="card">
+      <h2>Recent Sales <button class="refresh-btn" onclick="loadSalesHistory()">Refresh</button></h2>
+      <div id="salesHistoryWrap">
+        <p class="muted">Loading sales history...</p>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -213,7 +239,72 @@
     });
 
     let products = [];
+    let customers = [];
     let cart = []; // { product_id, name, unit_price, quantity }
+
+    async function loadCustomersDropdown() {
+      const select = document.getElementById("customerSelect");
+      try {
+        const res = await fetch(`${API_BASE}/customers/`, { headers: authHeaders });
+        if (!res.ok) throw new Error();
+        customers = await res.json();
+        select.innerHTML = `<option value="">Walk-in customer</option>` +
+          customers.map(c => `<option value="${c.id}">${c.name}</option>`).join("");
+      } catch (err) {
+        select.innerHTML = `<option value="">Walk-in customer</option>`;
+      }
+    }
+
+    async function loadSalesHistory() {
+      const wrap = document.getElementById("salesHistoryWrap");
+      wrap.innerHTML = `<p class="muted">Loading sales history...</p>`;
+      try {
+        const res = await fetch(`${API_BASE}/sales/`, { headers: authHeaders });
+        if (!res.ok) throw new Error("Failed to load sales");
+        const sales = await res.json();
+
+        if (sales.length === 0) {
+          wrap.innerHTML = `<p class="muted">No sales yet.</p>`;
+          return;
+        }
+
+        // Newest first
+        const sorted = [...sales].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+        const rows = sorted.map(s => {
+          const customer = customers.find(c => c.id === s.customer_id);
+          const customerName = customer ? customer.name : "Walk-in";
+          const itemsSummary = (s.items || [])
+            .map(i => `${products.find(p => p.id === i.product_id)?.name || 'Item #' + i.product_id} x${i.quantity}`)
+            .join(", ");
+          const dt = new Date(s.created_at);
+          const dateStr = dt.toLocaleDateString();
+          const timeStr = dt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+          return `
+            <tr>
+              <td>${customerName}</td>
+              <td>${itemsSummary || '—'}</td>
+              <td>$${s.final_amount.toFixed(2)}</td>
+              <td>${s.payment_method}</td>
+              <td>${dateStr} ${timeStr}</td>
+            </tr>
+          `;
+        }).join("");
+
+        wrap.innerHTML = `
+          <table>
+            <thead>
+              <tr><th>Customer</th><th>Items</th><th>Total</th><th>Payment</th><th>Date</th></tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        `;
+      } catch (err) {
+        wrap.innerHTML = `<p class="error">Could not load sales history: ${err.message}</p>`;
+      }
+    }
+    window.loadSalesHistory = loadSalesHistory;
 
     async function loadProducts() {
       const select = document.getElementById("productSelect");
@@ -319,6 +410,7 @@
       const messageEl = document.getElementById("message");
 
       const payload = {
+        customer_id: document.getElementById("customerSelect").value ? parseInt(document.getElementById("customerSelect").value) : null,
         discount: parseFloat(document.getElementById("discount").value) || 0,
         tax: parseFloat(document.getElementById("tax").value) || 0,
         payment_method: document.getElementById("paymentMethod").value,
@@ -353,8 +445,10 @@
         cart = [];
         document.getElementById("discount").value = 0;
         document.getElementById("tax").value = 0;
+        document.getElementById("customerSelect").value = "";
         renderCart();
         loadProducts(); // refresh stock quantities
+        loadSalesHistory(); // refresh history to show the new sale
 
       } catch (err) {
         messageEl.textContent = err.message;
@@ -366,6 +460,8 @@
     });
 
     loadProducts();
+    loadCustomersDropdown();
+    loadSalesHistory();
     renderCart();
   </script>
 </body>
